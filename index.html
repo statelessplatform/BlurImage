@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline';">
+  <title>Privacy Blur – Local Privacy Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>
+      <span class="title-emoji" aria-hidden="true">🔒</span>
+      Privacy Blur
+    </h1>
+    <p class="subtitle">Blur sensitive content locally — no data leaves your browser. Fast, secure, and private.</p>
+
+    <div class="header-actions">
+      <button id="theme-btn" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+      <button id="guide-btn" class="icon-btn" aria-label="Open user guide" title="How to use">❓</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button id="upload-btn" class="btn" aria-label="Choose image to blur">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <span>Choose Image 📸</span>
+    </button>
+    <button id="blur-btn" class="btn btn-primary hidden" aria-label="Start blur region selection">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 1v6m0 6v6M1 12h6m6 0h6"></path>
+      </svg>
+      <span>Blur Region ✨</span>
+    </button>
+    <button id="download-btn" class="btn btn-success hidden" aria-label="Download blurred image">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>Download 💾</span>
+    </button>
+    <button id="clear-btn" class="btn btn-danger hidden" aria-label="Clear and start over">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      <span>Clear All 🗑️</span>
+    </button>
+  </div>
+
+  <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Drop zone for image upload">
+    <div class="drop-zone-emoji" aria-hidden="true">📤</div>
+    <p><strong>Drag image here or click to upload</strong><br>Supports PNG/JPG • Max 100MB</p>
+  </div>
+
+  <div id="canvas-container" class="canvas-container">
+    <canvas id="workspace-canvas" aria-label="Image workspace"></canvas>
+    <div id="overlay" class="overlay hidden" role="application" aria-label="Blur selection overlay"></div>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div id="progress" class="progress-container" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="progress-text">Processing...</div>
+  </div>
+
+  <!-- User Guide Modal -->
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <div class="modal">
+      <h2 id="modal-title">
+        <span aria-hidden="true">📖</span>
+        How to Use Privacy Blur
+      </h2>
+      <div class="modal-content">
+        <p><strong>Simple, fast, and completely private:</strong></p>
+        <ol>
+          <li><strong>Upload 📸</strong> – Click "Choose Image" or drag & drop your image (PNG/JPG, max 100MB)</li>
+          <li><strong>Select ✨</strong> – Click "Blur Region" then drag over sensitive areas on your image</li>
+          <li><strong>Repeat 🔁</strong> – Blur multiple regions as needed</li>
+          <li><strong>Download 💾</strong> – Save your privacy-protected image</li>
+        </ol>
+        <p style="margin-top: 16px;"><strong>Privacy guaranteed:</strong> All processing happens in your browser. No uploads, no tracking, no data collection.</p>
+        <p style="margin-top: 12px; font-size: 14px; color: #888;">💡 Tip: Works on desktop and mobile devices with touch support!</p>
+      </div>
+      <button class="modal-close" aria-label="Close user guide">Got it! 👍</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Performance Indicator (Dev Mode) -->
+  <div id="perf-indicator" class="perf-indicator"></div>
+
+  <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" hidden aria-hidden="true" />
+
+  <script src="script.js"></script>
+</body>
+</html>
